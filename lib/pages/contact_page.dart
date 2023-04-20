@@ -14,6 +14,8 @@ class _ContactPageState extends State<ContactPage> {
   TextEditingController contactNameCtrl = TextEditingController();
   TextEditingController contactNumberCtrl = TextEditingController();
 
+  var selectedIndex = -1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +68,25 @@ class _ContactPageState extends State<ContactPage> {
                     }
                   },
                   child: const Text("Save")),
-              ElevatedButton(onPressed: () {}, child: const Text("Update"))
+              ElevatedButton(
+                  onPressed: () {
+                    String contactNameText = contactNameCtrl.text.trim();
+                    String contactNumberText = contactNumberCtrl.text.trim();
+
+                    if (contactNameText.isNotEmpty &&
+                        contactNumberText.isNotEmpty) {
+                      setState(() {
+                        contactNameCtrl.text = "";
+                        contactNumberCtrl.text = "";
+                        contacts[selectedIndex].contactName = contactNameText;
+                        contacts[selectedIndex].contactNumber =
+                            contactNumberText;
+
+                        selectedIndex = -1;
+                      });
+                    }
+                  },
+                  child: const Text("Update"))
             ],
           ),
           const SizedBox(height: 25),
@@ -87,11 +107,49 @@ class _ContactPageState extends State<ContactPage> {
   }
 
   Widget getRow(int index) {
-    return ListTile(
-      title: Column(children: [
-        Text(contacts[index].contactNumber),
-        Text(contacts[index].contactNumber),
-      ]),
+    return Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor:
+              (index % 2 == 0) ? Colors.deepPurple : Colors.deepPurpleAccent,
+          foregroundColor: Colors.white,
+          child: Text(contacts[index].contactName[0].toUpperCase(),
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              contacts[index].contactName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(contacts[index].contactNumber),
+          ],
+        ),
+        trailing: SizedBox(
+          width: 80,
+          child: Row(
+            children: [
+              InkWell(
+                  onTap: (() {
+                    setState(() {
+                      contactNameCtrl.text = contacts[index].contactName;
+                      contactNumberCtrl.text = contacts[index].contactNumber;
+                      selectedIndex = index;
+                    });
+                  }),
+                  child: const Icon(Icons.edit)),
+              InkWell(
+                  onTap: (() {
+                    setState(() {
+                      contacts.removeAt(index);
+                    });
+                  }),
+                  child: const Icon(Icons.delete)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
