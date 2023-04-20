@@ -18,6 +18,53 @@ class _ContactPageState extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
+    var buttonSet1 = [
+      ElevatedButton(
+          onPressed: () {
+            String contactNameText = contactNameCtrl.text.trim();
+            String contactNumberText = contactNumberCtrl.text.trim();
+
+            if (contactNameText.isNotEmpty && contactNumberText.isNotEmpty) {
+              setState(() {
+                contactNameCtrl.text = "";
+                contactNumberCtrl.text = "";
+                contacts.add(ContactModel(
+                  contactName: contactNameText,
+                  contactNumber: contactNumberText,
+                ));
+              });
+            }
+          },
+          child: const Text("Add"))
+    ];
+    var buttonSet2 = [
+      ElevatedButton(
+          onPressed: () {
+            String contactNameText = contactNameCtrl.text.trim();
+            String contactNumberText = contactNumberCtrl.text.trim();
+
+            if (contactNameText.isNotEmpty && contactNumberText.isNotEmpty) {
+              setState(() {
+                contactNameCtrl.text = "";
+                contactNumberCtrl.text = "";
+                contacts[selectedIndex].contactName = contactNameText;
+                contacts[selectedIndex].contactNumber = contactNumberText;
+
+                selectedIndex = -1;
+              });
+            }
+          },
+          child: const Text("Update")),
+      ElevatedButton(
+          onPressed: () {
+            setState(() {
+              contactNameCtrl.text = "";
+              contactNumberCtrl.text = "";
+              selectedIndex = -1;
+            });
+          },
+          child: const Text("Close"))
+    ];
     return Scaffold(
       appBar: AppBar(
         title: const Text("Contact"),
@@ -49,45 +96,7 @@ class _ContactPageState extends State<ContactPage> {
           const SizedBox(height: 25),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                  onPressed: () {
-                    String contactNameText = contactNameCtrl.text.trim();
-                    String contactNumberText = contactNumberCtrl.text.trim();
-
-                    if (contactNameText.isNotEmpty &&
-                        contactNumberText.isNotEmpty) {
-                      setState(() {
-                        contactNameCtrl.text = "";
-                        contactNumberCtrl.text = "";
-                        contacts.add(ContactModel(
-                          contactName: contactNameText,
-                          contactNumber: contactNumberText,
-                        ));
-                      });
-                    }
-                  },
-                  child: const Text("Save")),
-              ElevatedButton(
-                  onPressed: () {
-                    String contactNameText = contactNameCtrl.text.trim();
-                    String contactNumberText = contactNumberCtrl.text.trim();
-
-                    if (contactNameText.isNotEmpty &&
-                        contactNumberText.isNotEmpty) {
-                      setState(() {
-                        contactNameCtrl.text = "";
-                        contactNumberCtrl.text = "";
-                        contacts[selectedIndex].contactName = contactNameText;
-                        contacts[selectedIndex].contactNumber =
-                            contactNumberText;
-
-                        selectedIndex = -1;
-                      });
-                    }
-                  },
-                  child: const Text("Update"))
-            ],
+            children: selectedIndex < 0 ? buttonSet1 : buttonSet2,
           ),
           const SizedBox(height: 25),
           contacts.isEmpty
@@ -127,7 +136,7 @@ class _ContactPageState extends State<ContactPage> {
           ],
         ),
         trailing: SizedBox(
-          width: 80,
+          width: 50,
           child: Row(
             children: [
               InkWell(
