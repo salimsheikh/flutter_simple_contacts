@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:simple_contact_list/models/contact_model.dart';
+import 'package:simple_contact_list/widget/scrollable_widget.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
@@ -105,82 +106,27 @@ class _ContactPageState extends State<ContactPage> {
                   "No Contacts yet...",
                   style: TextStyle(color: Colors.black, fontSize: 22),
                 )
-              : Center(
-                  child: Table(
-                    border: TableBorder.all(),
-                    columnWidths: const {
-                      0: FractionColumnWidth(0.33),
-                      1: FractionColumnWidth(0.33),
-                      2: FractionColumnWidth(0.33),
-                    },
-                    children: [
-                      buildRow(['Header 1', 'Header 2', 'Header 3'],
-                          isHeader = true),
-                      buildRow(['cel1', 'cel2', 'cel2'], false),
-                      buildRow(['cel1', 'cel2', 'cel2'], false)
-                    ],
-                  ),
-                )
+              : ScrollableWidget(child: buildDataTatle())
         ]),
       ),
     );
   }
 
-  TableRow buildRow(List<String> cells, bool isHeader) => TableRow(
-        children: cells.map((cell) {
-          final style = TextStyle(
-              fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-              fontSize: 18);
-          return Center(
-            child: Text(cell, style: style),
-          );
-        }).toList(),
-      );
-
-  Widget getRow(int index) {
-    return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor:
-              (index % 2 == 0) ? Colors.deepPurple : Colors.deepPurpleAccent,
-          foregroundColor: Colors.white,
-          child: Text(contacts[index].contactName[0].toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              contacts[index].contactName,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(contacts[index].contactNumber),
-          ],
-        ),
-        trailing: SizedBox(
-          width: 50,
-          child: Row(
-            children: [
-              InkWell(
-                  onTap: (() {
-                    setState(() {
-                      contactNameCtrl.text = contacts[index].contactName;
-                      contactNumberCtrl.text = contacts[index].contactNumber;
-                      selectedIndex = index;
-                    });
-                  }),
-                  child: const Icon(Icons.edit)),
-              InkWell(
-                  onTap: (() {
-                    setState(() {
-                      contacts.removeAt(index);
-                    });
-                  }),
-                  child: const Icon(Icons.delete)),
-            ],
-          ),
-        ),
-      ),
-    );
+  Widget buildDataTatle() {
+    final columns = ['Name', 'Number', 'age'];
+    return DataTable(columns: getColumns(columns), rows: getRows(contacts));
   }
+
+  List<DataColumn> getColumns(List<String> columns) =>
+      columns.map((String column) => DataColumn(label: Text(column))).toList();
+
+  List<DataRow> getRows(List<ContactModel> contact) =>
+      contact.map((ContactModel contact) {
+        final cells = [contact.contactName, contact.contactNumber, '25'];
+
+        return DataRow(cells: getCells(cells));
+      }).toList();
+
+  List<DataCell> getCells(List<dynamic> cells) =>
+      cells.map((data) => DataCell(Text('$data'))).toList();
 }
