@@ -15,6 +15,7 @@ class _ContactPageState extends State<ContactPage> {
   TextEditingController contactNumberCtrl = TextEditingController();
 
   var selectedIndex = -1;
+  bool isHeader = false;
 
   @override
   Widget build(BuildContext context) {
@@ -104,16 +105,37 @@ class _ContactPageState extends State<ContactPage> {
                   "No Contacts yet...",
                   style: TextStyle(color: Colors.black, fontSize: 22),
                 )
-              : Expanded(
-                  child: ListView.builder(
-                    itemCount: contacts.length,
-                    itemBuilder: (context, index) => getRow(index),
+              : Center(
+                  child: Table(
+                    border: TableBorder.all(),
+                    columnWidths: const {
+                      0: FractionColumnWidth(0.33),
+                      1: FractionColumnWidth(0.33),
+                      2: FractionColumnWidth(0.33),
+                    },
+                    children: [
+                      buildRow(['Header 1', 'Header 2', 'Header 3'],
+                          isHeader = true),
+                      buildRow(['cel1', 'cel2', 'cel2'], false),
+                      buildRow(['cel1', 'cel2', 'cel2'], false)
+                    ],
                   ),
                 )
         ]),
       ),
     );
   }
+
+  TableRow buildRow(List<String> cells, bool isHeader) => TableRow(
+        children: cells.map((cell) {
+          final style = TextStyle(
+              fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+              fontSize: 18);
+          return Center(
+            child: Text(cell, style: style),
+          );
+        }).toList(),
+      );
 
   Widget getRow(int index) {
     return Card(
